@@ -108,7 +108,8 @@ case class CassandraAggregates(
 
   /** Synchronize these so we don't do concurrent writes from the same box */
   def storeDependencies(deps: Dependencies): Future[Unit] = {
-    store[Long,gen.Dependencies](dependenciesCF, deps.startTime.floor(1.day).inMicroseconds, Seq(deps.toThrift))
+    val flooredStart = Time.fromMilliseconds(deps.startTime/1000).floor(1.day).inMicroseconds
+    store[Long,gen.Dependencies](dependenciesCF, flooredStart, Seq(deps.toThrift))
   }
 
   /** Synchronize these so we don't do concurrent writes from the same box */
